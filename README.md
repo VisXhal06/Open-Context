@@ -1,119 +1,91 @@
 # OpenContext
 
-> A provider-neutral context runtime for long-running AI agents.
+A provider-neutral context runtime for long-running AI agents.
 
-## Status
+OpenContext investigates whether structured state, recoverability, and provenance can reduce active context usage without losing task-critical information.
 
-**Research & Validation**
+**Status:** research and validation. A production framework will be built only if evaluation results justify it.
 
-OpenContext is currently a research and engineering project investigating context management, structured state, recoverability, provenance, and measurable evaluation for long-running AI agents.
+## Research question
 
-The project follows a research-first approach:
+Can a recoverability-aware context-management strategy reduce active context usage while preserving task-critical information better than simpler approaches?
+
+## Approach
+
+Work proceeds in a fixed sequence. Stages are not skipped without an explicit project decision.
 
 ```text
-Research
-   ↓
-Baselines
-   ↓
-Prototype
-   ↓
-Benchmark
-   ↓
-Evaluation
-   ↓
-GO / NO-GO
+Research → Baselines → Prototype → Benchmark → Evaluation → GO / NO-GO
+```
 
-The production framework will only be developed if the research provides sufficient evidence to justify it.
-Research Question
-Can a recoverability-aware context-management strategy reduce active context usage while preserving task-critical information better than simpler context-management approaches?
+Evidence comes before architecture, and architecture comes before features. Each major component should answer two questions: what problem it solves, and how success will be measured.
 
-Initial Baselines
-OpenContext will eventually be evaluated against:
+## Evaluation
+
+Strategies will be compared on the same workloads, context budgets, and criteria:
+
 1. Full conversation history
 2. Sliding-window context
 3. Plain summarization
 4. OpenContext cascade
-The strategies will be evaluated using comparable workloads, context budgets, and evaluation criteria.
-Core Model
-OpenContext separates:
-Active Context
-      +
-Structured State
-      +
-Recoverable Artifacts
-      +
-Provenance
-Technology
-Core
-- Python 3.11+
-- uv
-- Pydantic
-- asyncio
-- tiktoken
-- pytest
-- pytest-asyncio
-- Ruff
-- MyPy
-- Typer
-- structlog
-Development Persistence
-- SQLite
-- Filesystem artifacts
-Future Production Persistence
-- PostgreSQL
-- SQLAlchemy 2.x
-- Alembic
-- S3-compatible object storage
-Providers
-Initial:
-- Mock provider
-- Ollama
-Later:
-- OpenAI adapter
-- Anthropic adapter
-- Additional providers
-Provider-specific functionality will remain behind provider interfaces.
-Repository Structure
-opencontext/
-├── .ai/
-│   └── rules/
-├── .github/
-│   └── workflows/
-├── benchmarks/
-├── docs/
-├── src/
-│   └── opencontext/
+
+## Core model
+
+OpenContext separates four concerns:
+
+| Layer | Role |
+| --- | --- |
+| Active context | What the model sees on a given turn |
+| Structured state | Goals, decisions, constraints, and tasks kept in an explicit form |
+| Recoverable artifacts | Information that may leave the active window but must remain retrievable |
+| Provenance | How derived state was produced, so it can be audited and reconstructed |
+
+The domain layer stays independent of databases, cloud providers, LLM vendors, and agent frameworks.
+
+## Current stack
+
+Day 1 is the engineering foundation, not production infrastructure.
+
+| Area | Choice |
+| --- | --- |
+| Language | Python 3.11+ |
+| Package and environment | [uv](https://docs.astral.sh/uv/) |
+| Models and validation | Pydantic |
+| Tests | pytest, pytest-asyncio |
+| Quality | Ruff, MyPy |
+| License | Apache License 2.0 |
+
+Planned later, only when a later stage requires them: SQLite and filesystem artifacts for development persistence; PostgreSQL, SQLAlchemy, Alembic, and object storage for production persistence; mock and Ollama first, then other provider adapters behind the same interfaces.
+
+## Development
+
+```bash
+uv python install 3.11
+uv sync --dev
+uv run pytest
+uv run ruff check .
+uv run mypy
+```
+
+Copy `.env.example` to `.env` for local configuration. Do not put real secrets in source, tests, or fixtures.
+
+Contributor guidance lives in [`AGENTS.md`](AGENTS.md).
+
+## Repository
+
+```text
+.
+├── .ai/rules/          AI engineering rules
+├── .github/workflows/  CI
+├── src/opencontext/    Package source
 ├── tests/
 ├── AGENTS.md
 ├── LICENSE
 ├── README.md
 ├── pyproject.toml
 └── uv.lock
-Development Philosophy
-OpenContext prioritizes:
-Evidence
-   >
-Architecture
-   >
-Features
-Every major architectural component should answer:
-What problem does this solve?
+```
 
-and:
-How will we measure whether it works?
+## License
 
-License
-OpenContext is currently planned to use the Apache License 2.0.
-See LICENSE for the complete license text.
-Project Documentation
-Project direction and governance are documented under:
-docs/
-Additional documentation will be added as the research and implementation progress.
-
-Then save:
-
-```text
-Esc
-:wq
-Enter
-The README content follows the project's stated mission, research-first sequence, research question, baseline strategies, technology stack, and repository principles.
+Licensed under the [Apache License 2.0](LICENSE).
