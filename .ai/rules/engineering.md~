@@ -1,0 +1,25 @@
+# OpenContext Engineering Rules
+
+## Scope
+
+These rules apply to AI-assisted development in the OpenContext repository.
+
+## Research First
+
+- Follow the project execution sequence.
+- Do not skip research, baseline, benchmark, or evaluation stages.
+- Do not implement future stages prematurely.
+- Prefer the smallest implementation required by the current stage.
+
+## Architecture
+
+Maintain separation between:
+
+```text
+Domain
+  ↓
+Runtime
+  ↓
+Persistence
+  ↓
+Infrastructure
